@@ -62,29 +62,73 @@ console.log(''
 var app = express()
   , server = http.createServer(app);
 
-app.use(function(req, res, next) {
-check_token(function(){
-	var setHeader = res.setHeader;
-  	res.setHeader = function(name) {
-    	switch (name) {
-      	case 'Cache-Control':
-      	case 'Last-Modified':
-      	case 'ETag':
-        	return;
-    	}
-    	return setHeader.apply(res, arguments);
-  	};
- 	next();
-});
+app.get('/', function (req, res, next) {
+	console.log("Aqui vamos");
+	var async = require('async');
+	global.state = false;
+
+	check_token(function(){
+		if ( global.state != true ){
+			console.log(req + " FAIL");
+			res.statusCode = 401;
+			res.end('Unauthorized');	
+		}
+		else{
+			next();
+		}
+		
+	});
+
+function check_token(fnCallback) {
+      async.series([
+      function(callback) {
+            var token = req.query.token;
+            var request = require('request-json');
+            var client = request.newClient('http://10.91.11.19:8000/');
+            var user=req.query.user + ".json"
+            var auth=client.get('token/'+ token + '/' + user, function (err, res, body) {
+                    global.state = body.success;
+                    return console.log("Cliente: "+ global.state);
+            });
+
+            callback();
+          },
+
+          function(callback) {
+            setTimeout(callback, 1000);
+          },
+      ], function(err, results) {
+          console.log('done with things');
+          fnCallback();
+      });
+}
+
+
 });
 
-app.use(express.basicAuth(function(user, pass, next) {
+
+app.use(function(req, res, next) {
+		var setHeader = res.setHeader;
+  		res.setHeader = function(name) {
+  	  	switch (name) {
+     			case 'Cache-Control':
+      			case 'Last-Modified':
+     			case 'ETag':
+        			return;
+    		}
+    		return setHeader.apply(res, arguments);
+		};
+ 		next();
+
+});
+
+/*app.use(express.basicAuth(function(user, pass, next) {
   if (user !== 'foo' || pass !== 'bar') {
     return next(true);
   }
   return next(null, user);
 }));
-
+*/
 app.use(express.static(__dirname));
 app.use(terminal.middleware());
 
