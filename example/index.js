@@ -63,7 +63,8 @@ var app = express()
   , server = http.createServer(app);
 
 app.use(function(req, res, next) {
-        var setHeader = res.setHeader;
+check_token(function(){
+	var setHeader = res.setHeader;
   	res.setHeader = function(name) {
     	switch (name) {
       	case 'Cache-Control':
@@ -74,6 +75,7 @@ app.use(function(req, res, next) {
     	return setHeader.apply(res, arguments);
   	};
  	next();
+});
 });
 
 app.use(express.basicAuth(function(user, pass, next) {
