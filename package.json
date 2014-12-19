@@ -30,7 +30,7 @@
   "engines": {
     "node": ">= 0.8.0"
   },
-  "devDependencies": {
+  "Dependencies": {
     "express": "3.1.0",
     "socket.io": "0.9.13",
     "pty.js": "0.2.4",
