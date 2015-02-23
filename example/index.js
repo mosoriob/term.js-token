@@ -65,7 +65,7 @@ var app = express()
 app.get('/', function (req, res, next) {
 	console.log("Aqui vamos");
 	var async = require('async');
-	global.state = false;
+	global.state = true;
 
 	check_token(function(){
 		if ( global.state != true ){
@@ -86,6 +86,7 @@ function check_token(fnCallback) {
             var request = require('request-json');
             var client = request.newClient('http://10.91.11.19:8000/');
             var user=req.query.user + ".json"
+	    console.log(user)
             var auth=client.get('token/'+ token + '/' + user, function (err, res, body) {
                     global.state = body.success;
                     return console.log("Cliente: "+ global.state);
@@ -138,7 +139,7 @@ if (!~process.argv.indexOf('-n')) {
   });
 }
 
-server.listen(8080);
+server.listen(3131);
 
 /**
  * Sockets
