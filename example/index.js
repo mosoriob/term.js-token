@@ -63,13 +63,11 @@ var app = express()
   , server = http.createServer(app);
 
 app.get('/', function (req, res, next) {
-	console.log("Aqui vamos");
 	var async = require('async');
 	global.state = true;
 
 	check_token(function(){
 		if ( global.state != true ){
-			console.log(req + " FAIL");
 			res.statusCode = 401;
 			res.end('Unauthorized');	
 		}
@@ -99,7 +97,6 @@ function check_token(fnCallback) {
             setTimeout(callback, 1000);
           },
       ], function(err, results) {
-          console.log('done with things');
           fnCallback();
       });
 }
