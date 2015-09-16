@@ -65,15 +65,7 @@ var app = express()
 app.get('/', function (req, res, next) {
 	var async = require('async');
 	global.state = true;
-
-	check_token(function(){
-		if ( global.state != true ){
-			res.statusCode = 401;
-			res.end('Unauthorized');	
-		}
-		else{
-			next();
-		}
+  next();
 		
 	});
 
